@@ -2,12 +2,14 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 
 const blurPx = ref(0);
+const scrollIndicatorOpacity = ref(0.45);
 let rafId = 0;
 
 const updateSceneState = () => {
   const viewport = window.innerHeight || 1;
   const progress = Math.min(window.scrollY / viewport, 1);
   blurPx.value = progress * 14;
+  scrollIndicatorOpacity.value = 1 - progress * 0.9;
 };
 
 const onScroll = () => {
@@ -41,6 +43,12 @@ onBeforeUnmount(() => {
   <main class="landing-stack">
     <section class="first-view">
       <div class="first-surface" :style="{ '--scroll-blur': blurPx + 'px' }" />
+      <div class="scroll-indicator" :style="{ opacity: scrollIndicatorOpacity }">
+        <span class="scroll-text">scroll</span>
+        <div class="line-outer">
+          <div class="line-inner"></div>
+        </div>
+      </div>
     </section>
 
     <section class="overlay-view" />
@@ -60,6 +68,45 @@ onBeforeUnmount(() => {
   height: 100dvh;
   overflow: hidden;
   background: #000;
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  transition: opacity 0.12s linear;
+}
+
+.scroll-text {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.line-outer {
+  position: relative;
+  width: 1px;
+  height: 48px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.line-inner {
+  position: absolute;
+  top: -50%;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: #fff;
+  animation: lineRun 1.8s cubic-bezier(0.76, 0, 0.24, 1) infinite;
 }
 
 .first-surface {
@@ -103,5 +150,15 @@ onBeforeUnmount(() => {
   background: #0b1e4f;
   opacity: 90%;
   border-radius: 36px 36px 0 0;
+}
+
+@keyframes lineRun {
+  0% {
+    top: -50%;
+  }
+
+  100% {
+    top: 100%;
+  }
 }
 </style>
