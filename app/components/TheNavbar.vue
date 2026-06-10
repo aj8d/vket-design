@@ -14,7 +14,7 @@ const updateVisibility = () => {
   }
 
   const { top } = overlayView.getBoundingClientRect();
-  isVisible.value = top <= 0;
+  isVisible.value = top <= 600;
 };
 
 const onScroll = () => {
